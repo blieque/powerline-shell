@@ -1,4 +1,11 @@
-powerline-shell.py
+# python bytecode
 *.py[co]
+
+# individual configuration
 config.py
-*~
+
+# output script
+powerline-shell.py
+
+# test outputs (or anything ending in ".out")
+**/*.out

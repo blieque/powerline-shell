@@ -30,7 +30,7 @@ def add_fossil_segment():
         if has_missing_files:
             extra += '!'
         branch += (' ' + extra if extra != '' else '')
-    powerline.append(' %s ' % branch, fg, bg)
+    powerline.append(branch, fg, bg)
 
 try:
     add_fossil_segment()
