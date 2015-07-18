@@ -1,18 +1,20 @@
-# A Powerline style prompt for your shell
+# Powerline Shell
 
 A [Powerline](https://github.com/Lokaltog/vim-powerline)-inspired prompt for Bash, Zsh and Fish.
 
 ![Power line shell with default colour scheme and terminus font, size nine](https://raw.githubusercontent.com/blieque/powerline-shell/master/images/terminus-9.png)
 
-* shows important details about the revision control (Git, Mercurial, SVN, Fossil, Bazaar) branch:
+Powerline Shell will:
+
+* show important details about the revision control (Git, Mercurial, SVN, Fossil, Bazaar) branch:
     * current branch name
     * current branch cleanliness
     * existence of untracked files
     * commit difference between local and remote branches
-* indicates if the last command exited with a failure code
-* shows a shortened path if the working directory is deep within a tree
-* shows the current Python [virtualenv](http://www.virtualenv.org/) environment
-* easily customised and extended (see below for details)
+* indicate if the last command exited with a failure code
+* show a shortened path if the working directory is deep within a tree
+* show the current Python [virtualenv](http://www.virtualenv.org/) environment
+* let you easily customise and extend your prompt (see below for details)
 
 # Setup
 

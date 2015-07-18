@@ -22,12 +22,21 @@ def get_current_fs():
 
 def get_git_status():
 
-    has_pending_commits = True
-    has_untracked_files = False
+    '''
+    repository_state
+        0: changes made, not all staged for commit, untracked files
+        1: changes made, not all staged for commit
+        2: changes made, all staged for commit
+        3: no changes made, all committed
+    '''
+    repository_state = 3
+
     origin_position = ''
-    output = subprocess.Popen(['git', 'status', '--ignore-submodules'],
-             env = { 'LANG': 'C', 'HOME': os.getenv('HOME')},
-             stdout=subprocess.PIPE).communicate()[0]
+    output = subprocess.Popen(
+        ['git', 'status', '--ignore-submodules'],
+        env = { 'LANG': 'C', 'HOME': os.getenv('HOME')},
+        stdout = subprocess.PIPE
+    ).communicate()[0]
 
     origin_status = \
         re.findall(r"Your branch is (ahead|behind).*?(\d+) commit", output)
@@ -43,19 +52,23 @@ def get_git_status():
             origin_position += u'\u21E1'
 
     if diverged_status:
+
         origin_position = " %d%c %d%c" % \
             (int(diverged_status[0][0]),
             u'\u21E1',
             int(diverged_status[0][1]),
             u'\u21E3')
 
-    if output.find('nothing to commit') >= 0:
-        has_pending_commits = False
-
     if output.find('Untracked files') >= 0:
-        has_untracked_files = True
+        repository_state = 0
 
-    return has_pending_commits, has_untracked_files, origin_position
+    elif output.find('Changes not staged for commit') >= 0:
+        repository_state = 1
+
+    elif output.find('Changes to be committed') >= 0:
+        repository_state = 2
+
+    return repository_state, origin_position
 
 
 def add_git_segment():
@@ -81,27 +94,27 @@ def add_git_segment():
 
     if not re.match('^nfs', fs):
 
-        has_pending_commits, has_untracked_files, origin_position = \
-            get_git_status()
+        repository_state, origin_position = get_git_status()
 
         branch += origin_position
-        if has_untracked_files:
+        if repository_state == 0:
             branch += ' +'
 
         bg = Color.REPO_CLEAN_BG
         fg = Color.REPO_CLEAN_FG
 
-        if has_pending_commits:
+        if repository_state == 0 or repository_state == 1:
             bg = Color.REPO_DIRTY_BG
             fg = Color.REPO_DIRTY_FG
-        #    branch += u' \u2718' # unicode 'x' shape
-        #else:
-        #    branch += u' \u2714' # unicode check mark/tick
+
+        elif repository_state == 2:
+            bg = Color.REPO_STAGED_BG
+            fg = Color.REPO_STAGED_FG
 
     else:
         bg = Color.REPO_UNKNOWN_BG
         fg = Color.REPO_UNKNOWN_FG
-        branch += ' (nfs)'
+        branch += '(nfs)'
 
     powerline.append(branch, fg, bg)
 
