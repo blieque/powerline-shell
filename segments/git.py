@@ -1,6 +1,25 @@
 import re
 import subprocess
 
+def get_current_fs():
+
+    try:
+        process = subprocess.Popen(
+            ['stat', '-f', '-c', '%T', '.'],
+            stdout = subprocess.PIPE,
+            stderr = subprocess.PIPE
+        )
+        out, err = process.communicate()
+
+        if out is not '':
+            return out.strip()
+        else:
+            raise 'no valid output'
+
+    except Exception, e:
+        warn('could not determine local filesystem: ' + e.message)
+        return None
+
 def get_git_status():
 
     has_pending_commits = True
@@ -58,23 +77,31 @@ def add_git_segment():
     else:
         branch += '(detached)'
 
-    has_pending_commits, has_untracked_files, origin_position = \
-        get_git_status()
+    fs = get_current_fs()
 
-    branch += origin_position
-    if has_untracked_files:
-        #branch += u' \u271A' # fatter unicode plus symbol
-        branch += ' +'
+    if not re.match('^nfs', fs):
 
-    bg = Color.REPO_CLEAN_BG
-    fg = Color.REPO_CLEAN_FG
+        has_pending_commits, has_untracked_files, origin_position = \
+            get_git_status()
 
-    if has_pending_commits:
-        bg = Color.REPO_DIRTY_BG
-        fg = Color.REPO_DIRTY_FG
-    #    branch += u' \u2718' # unicode 'x' shape
-    #else:
-    #    branch += u' \u2714' # unicode check mark/tick
+        branch += origin_position
+        if has_untracked_files:
+            branch += ' +'
+
+        bg = Color.REPO_CLEAN_BG
+        fg = Color.REPO_CLEAN_FG
+
+        if has_pending_commits:
+            bg = Color.REPO_DIRTY_BG
+            fg = Color.REPO_DIRTY_FG
+        #    branch += u' \u2718' # unicode 'x' shape
+        #else:
+        #    branch += u' \u2714' # unicode check mark/tick
+
+    else:
+        bg = Color.REPO_UNKNOWN_BG
+        fg = Color.REPO_UNKNOWN_FG
+        branch += ' (nfs)'
 
     powerline.append(branch, fg, bg)
 

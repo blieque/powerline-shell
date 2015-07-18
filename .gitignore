@@ -9,3 +9,6 @@ powerline-shell.py
 
 # test outputs (or anything ending in ".out")
 **/*.out
+
+# vim swap files
+.*.sw[op]
