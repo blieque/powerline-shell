@@ -78,13 +78,17 @@ class Powerline:
         segment = self.segments[idx]
         next_segment = self.segments[idx + 1] if idx < len(self.segments)-1 else None
 
+        ending_bg_color = self.reset
+        if next_segment and next_segment[2]:
+            ending_bg_color = self.bgcolor(next_segment[2])
+
         return ''.join((
             self.reset if segment[1] is None or segment[2] is None else '',
             self.fgcolor(segment[1]),
             self.bgcolor(segment[2]),
             segment[0],
-            self.bgcolor(next_segment[2]) if next_segment and next_segment[2] else self.reset,
             self.fgcolor(segment[4]),
+            ending_bg_color,
             segment[3]))
 
 def get_valid_cwd():
@@ -92,7 +96,7 @@ def get_valid_cwd():
         happens when you checkout a different branch on git that doesn't have
         this directory.
         We return the original cwd because the shell still considers that to be
-        the working directory, so returning our guess will confuse people
+        the working directory, so returning our guess will confuse people.
     """
     try:
         cwd = os.getcwd()
@@ -123,8 +127,10 @@ if __name__ == "__main__":
     arg_parser.add_argument('--mode', action='store', default='patched',
             help='The characters used to make separators between segments',
             choices=['patched', 'compatible', 'flat'])
-    arg_parser.add_argument('--shell', action='store', default='bash',
+    arg_parser.add_argument('--shell', action='store', default='bare',
             help='Set this to your shell type', choices=['bash', 'zsh', 'bare'])
+    arg_parser.add_argument('--full-hostname', action='store_true',
+            help='Show the full hostname, rather than the first section of it')
     arg_parser.add_argument('prev_error', nargs='?', type=int, default=0,
             help='Error code returned by the last command')
     args = arg_parser.parse_args()

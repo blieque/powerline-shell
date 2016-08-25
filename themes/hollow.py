@@ -31,7 +31,7 @@ class Color(DefaultColor):
     REPO_CLEAN_BG = 61   # lilac-ish
     REPO_CLEAN_FG = 230  # cream
 
-    CMD_PASSED_BG = 234  # dark grey
+    CMD_PASSED_BG = 235  # dark grey
     CMD_PASSED_FG = 251  # light-ish grey
     CMD_FAILED_BG = 197  # pink
     CMD_FAILED_FG = 230  # cream
