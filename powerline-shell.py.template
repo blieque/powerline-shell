@@ -81,14 +81,18 @@ class Powerline:
         ending_bg_color = self.reset
         if next_segment and next_segment[2]:
             ending_bg_color = self.bgcolor(next_segment[2])
+        else
+            from sys import platform
+            if platform == 'darwin':
+                ending_bg_color = self.bgcolor(234)
 
         return ''.join((
             self.reset if segment[1] is None or segment[2] is None else '',
             self.fgcolor(segment[1]),
             self.bgcolor(segment[2]),
             segment[0],
-            self.fgcolor(segment[4]),
             ending_bg_color,
+            self.fgcolor(segment[4]),
             segment[3]))
 
 def get_valid_cwd():
